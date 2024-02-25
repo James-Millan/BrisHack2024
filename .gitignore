@@ -1,7 +1,5 @@
-*.js
 !jest.config.js
 !tailwind.config.js
-*.d.ts
 *node_modules
 
 # CDK asset staging directory
