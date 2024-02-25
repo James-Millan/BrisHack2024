@@ -1,8 +1,18 @@
-from flask import Flask, request
+import os
 import urllib
+from flask import Flask, request, send_from_directory
+
+app = Flask(__name__, static_folder='../frontend/build')
 
 
-app = Flask(__name__)
+# Route non-api requests to the frontend
+@app.route("/", defaults={"path": ""})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 
 @app.route('/api/echo', methods=['GET', 'POST'])
@@ -24,4 +34,4 @@ def hello():
 
 
 if __name__ == '__main__':
-  app.run()
+  app.run(use_reloader=True, threaded=True, host='0.0.0.0', port=80)
