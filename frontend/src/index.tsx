@@ -18,6 +18,5 @@ root.render(
               <Route path="*" element={<NotFound />} />
           </Routes>
       </BrowserRouter>
-    <AuthPage />
   </React.StrictMode>
 );

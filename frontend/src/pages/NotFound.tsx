@@ -1,5 +1,4 @@
-import { useState } from "react";
-import notFound from "../images/NotFound.png"
+import notFound from "../images/NotFound.png";
 
 function NotFound() {
 
