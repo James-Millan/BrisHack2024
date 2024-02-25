@@ -49,16 +49,16 @@ def get_liked_songs():
 
 def generate_playlist(songs, duration, type):
     bpm_low = 120
-    bpm_high = 170
-    if type == 0:
-        bpm_low = 120
-        bpm_high = 140
-    elif type == 1:
-        bpm_low = 130
-        bpm_high = 150
-    else:
-        bpm_low = 160
-        bpm_high = 180
+    bpm_high = 200
+    # if type == 0:
+    #     bpm_low = 120
+    #     bpm_high = 140
+    # elif type == 1:
+    #     bpm_low = 130
+    #     bpm_high = 150
+    # else:
+    #     bpm_low = 160
+    #     bpm_high = 180
 
     playlist = []
     total_time = duration * 1000
@@ -69,11 +69,12 @@ def generate_playlist(songs, duration, type):
     # songs = sorted(liked_songs, key= lambda x: x[1])
     random.shuffle(songs)
     for track in songs:
-        info = get_song_info(track[0])
-        if info['tempo'] <= bpm_high or info['tempo'] >= bpm_low:
-            if track[1] < total_time and track[1] > 0:
-                total_time = total_time - track[1]
-                playlist.append(track[0])
+        if track[1] < total_time and track[1] > 0:
+            info = get_song_info(track[0])
+            if info['tempo'] <= bpm_high and info['tempo'] >= bpm_low:
+                if info['danceability'] > 0.6 or info['energy'] > 0.6:
+                    total_time = total_time - track[1]
+                    playlist.append(track[0])
         if total_time < 60000:
             break
     # return URIs instead of IDs. 
@@ -198,5 +199,5 @@ def get_song_info(song_id):
         return
 
 liked_songs = get_liked_songs()
-playlist = generate_playlist(liked_songs, 1000, 2)
+playlist = generate_playlist(liked_songs, 10000, 2)
 create_playlist(playlist)
