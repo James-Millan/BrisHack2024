@@ -8,7 +8,8 @@ NUMBERS THAT CORRESPOND TO EXERCISE TYPE:
 1 - JOGGING 130-150 BPM
 2 - RUNNING 140 - 170 BPM
 """
-auth_key = ""
+auth_key = "BQC_-YV1YakzkisRsTwZz2jn236scQpDzgcDsYJ-DNZuQZa5vgw7gaTZFHwmBLyaIQD1xqbWuubEyReVpWSKjpqjtkx_4ejsVNzyjk6_3JabtQtgF1G3kQ4UnYo8B-R-YpxpuR7EskFE4EDYKXFxx5Oq975SFEX3uAYeH9FfOPoMn2UldHCr_hHwSUDKg5qvSV5Hw76vM8lj4R_qXNOj-q9erxUBAVNdqOY31K5WeKO7UU1BdeC2GlbJ80k7rllq4susGQ"
+
 def get_liked_songs():
 
     finished = False
@@ -18,9 +19,7 @@ def get_liked_songs():
     liked_songs = []
 
     while not finished:
-
         # setup and send request
-
         response = requests.get(url, headers=headers)
 
         # obtain a users liked songs.
@@ -136,6 +135,30 @@ def generate_playlist(songs, duration, type):
 
         if total_time < 60000:
             break
+    if total_time > 60000:
+        additional_songs = get_radio_songs([],[],playlist[:5])
+        # print(len(additional_songs))
+        random.shuffle(additional_songs)
+        additional_song_infos = batch_queries(additional_songs)
+        for i in range(len(songs)):
+            # this should never happen
+            track = additional_songs[i]
+            info = additional_song_infos[track[0]]
+            if track[1] < total_time and track[1] > 0:
+                if info is not None:
+                    if info['tempo'] >= 0:
+                        if ((info['danceability'] > 0.7 and info['energy'] > 0.6) or info['energy'] > 0.8 or info['danceability'] > 0.8):
+                            total_time = total_time - track[1]
+                            print(f"bpm: {info['tempo']} dance: {info['danceability']}, energy: {info['energy']}, loudness: {info['loudness']}, valence: {info['valence']}")
+                            playlist.append(track[0])
+                else:
+                    total_time = total_time - track[1]
+                    playlist.append(track[0])
+
+            # if total_time < 60000:
+            #     break
+
+
     # return URIs instead of IDs. 
     return ["spotify:track:" + item for item in playlist]
 
@@ -267,9 +290,8 @@ def get_radio_songs(artists,genres,tracks):
         "seed_artists": artists,
         "seed_genres": genres,
         "seed_tracks": tracks,
-        "min_danceability": 0.6,
-        "min_energy": 0.6,
-        "min_liveness": 0.6
+        "min_danceability": 0.8,
+        "min_energy": 0.8,
     }
 
     # Authorization header
@@ -281,10 +303,17 @@ def get_radio_songs(artists,genres,tracks):
     # Send the GET request
     response = requests.get(url, params=params, headers=headers)
 
+    rec_songs = []
     # Check for successful response
     if response.status_code == 200:
         # Parse the JSON response
-        data = response.json()
+        tracks_data = response.json()
+        for track in tracks_data['tracks']:
+            # print(track[])
+            # if song is longer than 6:01 then don't add it. It is simply too long for a runnning playlist :-)
+            # print(track['track']['available_markets'])
+            if track['duration_ms'] < 361000 and track['id'] is not None and ('GB' in track['available_markets']):
+                rec_songs.append(((track['id']), track['duration_ms']))
         
         # Access and process the data (tracks, artists, etc.)
         # ...
@@ -293,6 +322,7 @@ def get_radio_songs(artists,genres,tracks):
     else:
         print(f"Error: {response.status_code} {response.text}")
         print(f"{response}")
+    return rec_songs
 
 
 
