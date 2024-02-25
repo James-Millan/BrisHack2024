@@ -13,12 +13,19 @@ const ToggleOptions = () => {
     };
 
     return (
-                    <Box display="flex" justifyContent="center" alignItems="center"  height={"100%"} width={"100%"} gap={4}>
+        <Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
+
+            <Typography variant={"h5"} gutterBottom>
+                Pick a Mode
+            </Typography>
+                    <Box display="flex" justifyContent="space-between" alignItems="center" width={"100%"} gap={4} pl={4} pr={4}>
                         <Button
                             variant={selectedOption === 'running' ? 'contained' : 'outlined'}
                             color="primary"
                             onClick={() => handleOptionChange('running')}
-                            style={{height: '30%'}}
+                            style={{height: '100%'}}
+                            fullWidth
+
                         >
                             <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
                                 {selectedOption === 'running' ? <DirectionsRunIcon /> : <DirectionsRunOutlinedIcon />}
@@ -29,7 +36,8 @@ const ToggleOptions = () => {
                             variant={selectedOption === 'jogging' ? 'contained' : 'outlined'}
                             color="primary"
                             onClick={() => handleOptionChange('jogging')}
-                            style={{height: '30%'}}
+                            style={{height: '100%'}}
+                            fullWidth
                         >
                             <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
                                 {selectedOption === 'jogging' ? <DirectionsRunIcon /> : <DirectionsRunOutlinedIcon />}
@@ -40,7 +48,9 @@ const ToggleOptions = () => {
                             variant={selectedOption === 'walking' ? 'contained' : 'outlined'}
                             color="primary"
                             onClick={() => handleOptionChange('walking')}
-                            style={{height: '30%'}}
+                            style={{height: '100%'}}
+                            fullWidth
+
                         >
                             <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
                                 {selectedOption === 'walking' ? <DirectionsWalkIcon /> : <DirectionsWalkOutlinedIcon />}
@@ -48,6 +58,7 @@ const ToggleOptions = () => {
                             </Box>
                         </Button>
                     </Box>
+        </Box>
     );
 };
 

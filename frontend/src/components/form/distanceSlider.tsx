@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {Box, Button, Slider} from "@mui/material";
+import {Box, Button, Slider, Typography} from "@mui/material";
 
 function DistanceSlider() {
 
@@ -52,7 +52,11 @@ function DistanceSlider() {
 
 
     return (
-        <Box width={"100%"} display={"flex"} justifyContent={"center"}>
+        <Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
+
+            <Typography variant={"h5"} gutterBottom>
+                Distance
+            </Typography>
             <Slider
                 defaultValue={5}
                 valueLabelDisplay="auto"

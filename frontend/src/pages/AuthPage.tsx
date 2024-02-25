@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import {useLocation} from "react-router-dom";
+import {redirect, useLocation, useNavigate} from "react-router-dom";
 
 const AuthPage = ({bearerToken, setBearerToken}: {bearerToken : string | null, setBearerToken : Dispatch<SetStateAction<string | null>>}) => {
 
@@ -7,12 +7,14 @@ const AuthPage = ({bearerToken, setBearerToken}: {bearerToken : string | null, s
 
   const location_hash = useLocation().hash;
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const params = new URLSearchParams(location_hash);
     const access_token = params.get("#access_token");
     if (access_token) {
       setBearerToken(access_token);
-  
+      navigate("/start")
     }
   }, [setBearerToken, location_hash]);
 

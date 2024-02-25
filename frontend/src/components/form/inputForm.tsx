@@ -11,11 +11,12 @@ import {ReactJSXElement} from "@emotion/react/types/jsx-namespace";
 import AuthPage from "../../pages/AuthPage";
 import AuthButton from "./authButton";
 import DistanceSlider from "./distanceSlider";
+import ModeSelector from "./modeSelector";
 
-const steps = ['Playlist Generator', 'Mode', 'Distance'];
+const steps = ['Sign In', 'Mode', 'Distance'];
 const stepContents: React.ReactElement[] = [<AuthButton/>, <ToggleOptions/>, <DistanceSlider/>]
 
-const MyForm = () => {
+const MyForm = ({Token}: {Token : string | null}) => {
     const [activeStep, setActiveStep] = useState(0);
 
     const handleNext = () => {
@@ -29,41 +30,18 @@ const MyForm = () => {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
             <Card style={{width: '50%', height: '80%', display: "flex", flexDirection:"column", justifyContent:"space-between", padding:"2%"}}>
-                <CardContent>
-                    <Typography variant="h3" align="center">
-                        {steps.at(activeStep)}
-                    </Typography>
-
-                </CardContent>
-                <Box display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"} height={"100%"} width={"100%"} >
-                    {stepContents.at(activeStep)}
+                <Typography variant="h3" align="center">
+                    Welcome
+                </Typography>
+                <Box display={"flex"} flexDirection={"column"} alignItems={"center"} justifyContent={"space-evenly"} height={"100%"}>
+                    <ModeSelector/>
+                    <DistanceSlider/>
                 </Box>
                 <CardActions>
-                    <Box display="flex" flexDirection="column" width="100%" gap={3}>
-
-
-                        <div>
-                            {activeStep === steps.length ? (
-                                <p>Form submitted successfully!</p>
-                            ) : (
-                                <Box display="flex" flexDirection="row" width="100%" justifyContent="space-evenly">
-                                    <Button disabled={activeStep === 0} onClick={handleBack}>
-                                        Back
-                                    </Button>
-                                    <Button variant="contained" color="primary" onClick={handleNext}>
-                                        {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
-                                    </Button>
-                                </Box>
-                            )}
-                        </div>
-
-                        <Stepper activeStep={activeStep} alternativeLabel>
-                            {steps.map((label) => (
-                                <Step key={label}>
-                                    <StepLabel></StepLabel>
-                                </Step>
-                            ))}
-                        </Stepper>
+                    <Box display={"flex"} flexDirection={"row"} alignItems={"center"} justifyContent={"center"} width={"100%"}>
+                        <Button variant="contained" color="primary">
+                            Submit
+                        </Button>
                     </Box>
                 </CardActions>
             </Card>
