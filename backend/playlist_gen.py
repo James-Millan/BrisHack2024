@@ -1,6 +1,18 @@
 import requests
 import random
 
+
+"""
+NUMBERS THAT CORRESPOND TO EXERCISE TYPE:
+0 - POWER WALKING 120-140 BPM
+1 - JOGGING 130-150 BPM
+2 - RUNNING 140 - 170 BPM
+"""
+
+
+
+auth_key = "BQA7qTganYElWRWAwnOvG46T4_wTQhx97xbIonuEABSDU_p3tJsBEfOCHJWWinRZgvbk4rBD1a4_XOESSm0IrS0VzFbM8F9i9Dnw166tBI1dVPj1jYI8QAWVvw5t4f8i8-P8gO-2b7E4wY1UyaQjNmb33dJhSjNLKN-ZGj5c5tLnBDzGED3QlDtxfGQoOhrCwLUdR_mcZvgKZHtWsWz5zqKV3rxbzL90Zhu2MXae6PNf8F5eVlCSlkSqRQqcK3r_7KIRjQ"
+
 def get_liked_songs():
 
     finished = False
@@ -34,12 +46,20 @@ def get_liked_songs():
             print(f"Error message: {response.text}")
             return []
     return liked_songs
-liked_songs = get_liked_songs()
 
+def generate_playlist(songs, duration, type):
+    bpm_low = 120
+    bpm_high = 170
+    if type == 0:
+        bpm_low = 120
+        bpm_high = 140
+    elif type == 1:
+        bpm_low = 130
+        bpm_high = 150
+    else:
+        bpm_low = 160
+        bpm_high = 180
 
-
-
-def generate_playlist(songs, duration):
     playlist = []
     total_time = duration * 1000
     if len(liked_songs) < 1:
@@ -49,9 +69,13 @@ def generate_playlist(songs, duration):
     # songs = sorted(liked_songs, key= lambda x: x[1])
     random.shuffle(songs)
     for track in songs:
-        if track[1] < total_time and track[1] > 0:
-            total_time = total_time - track[1]
-            playlist.append(track[0])
+        info = get_song_info(track[0])
+        if info['tempo'] <= bpm_high or info['tempo'] >= bpm_low:
+            if track[1] < total_time and track[1] > 0:
+                total_time = total_time - track[1]
+                playlist.append(track[0])
+        if total_time < 60000:
+            break
     # return URIs instead of IDs. 
     return ["spotify:track:" + item for item in playlist]
 
@@ -69,7 +93,6 @@ def get_user_id():
         print(f"Error retrieving user information: {response.status_code}")
         print(f"Error message: {response.text}")
         return None
-
 
 def create_playlist(song_ids):
     playlist_data = {
@@ -153,5 +176,27 @@ def create_playlist(song_ids):
 
     return
 
-playlist = generate_playlist(liked_songs, 1000)
+def get_song_info(song_id):
+        # Set the URL and headers
+    url = f"https://api.spotify.com/v1/audio-features/{song_id}"
+    headers = {
+    "Authorization": f"Bearer {auth_key}"
+    }
+
+    # Send the GET request
+    response = requests.get(url, headers=headers)
+
+    # Check for successful response
+    if response.status_code == 200:
+        # Parse and print the response data
+        audio_features = response.json()
+        return audio_features
+    else:
+        # Handle error
+        print(f"Error retrieving audio features: {response.status_code}")
+        print(f"Error message: {response.text}")
+        return
+
+liked_songs = get_liked_songs()
+playlist = generate_playlist(liked_songs, 1000, 2)
 create_playlist(playlist)
