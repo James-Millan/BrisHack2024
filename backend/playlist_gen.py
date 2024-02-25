@@ -63,7 +63,7 @@ def batch_queries(songs):
         new_chunks.append(new_chunk)
     
     # send batched queries
-    song_infos = []
+    song_infos = {}
     finished = False
     # pop(0)
     while not finished:
@@ -85,7 +85,7 @@ def batch_queries(songs):
             returned_song_infos = response.json()
             # print(returned_song_infos)
             for song in returned_song_infos["audio_features"]:
-                song_infos.append(song)
+                song_infos[song['id']] = song
 
             # add each song info that is returned.
         else:
@@ -97,16 +97,16 @@ def batch_queries(songs):
 
 
 def generate_playlist(songs, duration, type):
-    bpm_low = 160
+    bpm_low = 100
     bpm_high = 200
     if type == 0:
-        bpm_low = 120
+        bpm_low = 100
         bpm_high = 140
     elif type == 1:
-        bpm_low = 130
+        bpm_low = 100
         bpm_high = 150
     else:
-        bpm_low = 160
+        bpm_low = 100
         bpm_high = 180
 
     playlist = []
@@ -121,15 +121,14 @@ def generate_playlist(songs, duration, type):
     random.shuffle(songs)
     for i in range(len(songs)):
         # this should never happen
-        if i > len(songs) or i > len(song_infos):
-            continue
         track = songs[i]
-        info = song_infos[i]
+        info = song_infos[track[0]]
         if track[1] < total_time and track[1] > 0:
             if info is not None:
-                if info['tempo'] <= bpm_high and info['tempo'] >= bpm_low:
-                    if info['danceability'] > 0.7 and info['energy'] > 0.7:
+                if info['tempo'] >= bpm_low:
+                    if (info['danceability'] > 0.8 and info['energy'] > 0.7 or info['energy'] > 0.9 or info['danceability'] > 0.9):
                         total_time = total_time - track[1]
+                        print(f"bpm: {info['tempo']} dance: {info['danceability']}, energy: {info['energy']}, loudness: {info['loudness']}, valence: {info['valence']}")
                         playlist.append(track[0])
             else:
                 total_time = total_time - track[1]
@@ -299,5 +298,5 @@ def get_radio_songs(artists,genres,tracks):
 
 
 liked_songs = get_liked_songs()
-playlist = generate_playlist(liked_songs, 1000, 2)
+playlist = generate_playlist(liked_songs, 5000, 2)
 create_playlist(playlist)
