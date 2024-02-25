@@ -24,13 +24,46 @@ MARKER_COLOUR = "000000"
 RADIUS_SCALAR = 0.12
 POINTS_ON_CIRCLE = 12
 CONVERSION_FACTOR = 111111  # 1 degree of latitude is approximately 111km
-THRESHOLD_IN_METRES = 15 # meters
+THRESHOLD_IN_METRES = 12 # meters
 
 
 # For testing
 MVB_LAT = 51.4560
 MVB_LNG = -2.6046
 POINTS = [(51.458630, -2.603818), (51.45825, -2.60374), (51.45732, -2.60372), (51.45697, -2.60358)]
+
+
+def create_route(lat, lng, distance_in_m):
+    """Creates a circular route around the given points with the given distance."""
+
+    # Compute the radius of the circle
+    radius = (distance_in_m / CONVERSION_FACTOR) * RADIUS_SCALAR
+    bearing = random.randint(0, 360)
+
+    # Calculate the coordinates of the centre of the circle at the given distance using haversine formula
+    circle_lat = lat + (radius * math.sin(math.radians(bearing)))
+    circle_lng = lng + (radius * math.cos(math.radians(bearing)))
+    offset_angle = 360 / POINTS_ON_CIRCLE
+
+    points = []
+
+    for i in range(POINTS_ON_CIRCLE):
+        angle = (bearing + (offset_angle * i)) % 360
+        # Convert to radians
+        new_lat = circle_lat + (radius * math.sin(math.radians(angle)))
+        new_lng = circle_lng + (radius * math.cos(math.radians(angle)))
+        
+        points.append((new_lat, new_lng))
+
+    nav_response = navigate(points)
+    geometry = nav_response["geometry"]
+    raw_points = polyline.decode(geometry)
+    filtered_points = remove_duplicates(raw_points)
+
+    return {
+        "distance": nav_response["distance"],
+        "points": filtered_points
+    }
 
 
 def create_polyline(points, circle=False):
@@ -80,39 +113,6 @@ def save_to_file(bytearray, path):
 
     with open(path, "wb") as f:
         f.write(bytearray)
-
-
-def create_route(lat, lng, distance_in_m):
-    """Creates a circular route around the given points with the given distance."""
-
-    # Compute the radius of the circle
-    radius = (distance_in_m / CONVERSION_FACTOR) * RADIUS_SCALAR
-    bearing = random.randint(0, 360)
-
-    # Calculate the coordinates of the centre of the circle at the given distance using haversine formula
-    circle_lat = lat + (radius * math.sin(math.radians(bearing)))
-    circle_lng = lng + (radius * math.cos(math.radians(bearing)))
-    offset_angle = 360 / POINTS_ON_CIRCLE
-
-    points = []
-
-    for i in range(POINTS_ON_CIRCLE):
-        angle = (bearing + (offset_angle * i)) % 360
-        # Convert to radians
-        new_lat = circle_lat + (radius * math.sin(math.radians(angle)))
-        new_lng = circle_lng + (radius * math.cos(math.radians(angle)))
-        
-        points.append((new_lat, new_lng))
-
-    nav_response = navigate(points)
-    geometry = nav_response["geometry"]
-    raw_points = polyline.decode(geometry)
-    filtered_points = remove_duplicates(raw_points)
-
-    return {
-        "distance": nav_response["distance"],
-        "points": filtered_points
-    }
 
 
 def navigate(points):
