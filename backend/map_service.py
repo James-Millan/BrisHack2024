@@ -105,8 +105,14 @@ def create_route(lat, lng, distance_in_m):
         points.append((new_lat, new_lng))
 
     nav_response = navigate(points)
-    print(f"Distance: {nav_response['distance']}")
-    return nav_response["geometry"]
+    geometry = nav_response["geometry"]
+    raw_points = polyline.decode(geometry)
+    filtered_points = remove_duplicates(raw_points)
+
+    return {
+        "distance": nav_response["distance"],
+        "points": filtered_points
+    }
 
 
 def navigate(points):
@@ -143,14 +149,11 @@ def remove_duplicates(points):
     return points
         
 
-
 if __name__ == "__main__":
 
-    geometry = create_route(MVB_LAT, MVB_LNG, 5000)
-    raw_points = polyline.decode(geometry)
-    filtered_points = remove_duplicates(raw_points)
-
-    uri = create_polyline(filtered_points, circle=True)
+    route = create_route(MVB_LAT, MVB_LNG, 5000)
+    
+    uri = create_polyline(route["points"], circle=True)
     path = create_path(uri)
     overlay = ",".join([path])
 

@@ -2,6 +2,8 @@ import os
 import urllib
 from flask import Flask, request, send_from_directory
 
+import map_service as map
+
 app = Flask(__name__, static_folder='../frontend/build')
 
 
@@ -13,6 +15,18 @@ def serve(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
+
+
+@app.route('/api/route', methods=['GET'])
+def route():
+    # Get url params
+    lat = request.args.get("lat")
+    lng = request.args.get("lng")
+    distance = request.args.get("distance")
+
+    # Call the map service
+    response = map.create_route(float(lat), float(lng), int(distance))
+    return response
 
 
 @app.route('/api/echo', methods=['GET', 'POST'])
