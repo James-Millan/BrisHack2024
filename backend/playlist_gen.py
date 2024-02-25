@@ -8,11 +8,7 @@ NUMBERS THAT CORRESPOND TO EXERCISE TYPE:
 1 - JOGGING 130-150 BPM
 2 - RUNNING 140 - 170 BPM
 """
-
-
-
-auth_key = "BQA7qTganYElWRWAwnOvG46T4_wTQhx97xbIonuEABSDU_p3tJsBEfOCHJWWinRZgvbk4rBD1a4_XOESSm0IrS0VzFbM8F9i9Dnw166tBI1dVPj1jYI8QAWVvw5t4f8i8-P8gO-2b7E4wY1UyaQjNmb33dJhSjNLKN-ZGj5c5tLnBDzGED3QlDtxfGQoOhrCwLUdR_mcZvgKZHtWsWz5zqKV3rxbzL90Zhu2MXae6PNf8F5eVlCSlkSqRQqcK3r_7KIRjQ"
-
+auth_key = ""
 def get_liked_songs():
 
     finished = False
@@ -32,7 +28,8 @@ def get_liked_songs():
             tracks_data = response.json()
             for track in tracks_data['items']:
                 # if song is longer than 6:01 then don't add it. It is simply too long for a runnning playlist :-)
-                if track['track']['duration_ms'] < 361000 and track['track']['id'] is not None:
+                # print(track['track']['available_markets'])
+                if track['track']['duration_ms'] < 361000 and track['track']['id'] is not None and ('GB' in track['track']['available_markets']):
                     liked_songs.append(((track['track']['id']), track['track']['duration_ms']))
             if tracks_data['next'] is not None:
                 # update response and headers...
@@ -44,23 +41,77 @@ def get_liked_songs():
         else:
             print(f"Spotify Tracks request failed with status code: {response.status_code}")
             print(f"Error message: {response.text}")
+            print(f"{response}")
+
             return []
     return liked_songs
 
+
+# batch my queries
+def batch_queries(songs):
+    # split into chunks of 100
+    chunks = []
+    for i in range(0, len(songs), 100):
+        chunks.append(songs[i:i + 100])
+
+    new_chunks = []
+    for chunk in chunks:
+        # list of pairs
+        new_chunk = []
+        for elem in chunk:
+            new_chunk.append(elem[0])
+        new_chunks.append(new_chunk)
+    
+    # send batched queries
+    song_infos = []
+    finished = False
+    # pop(0)
+    while not finished:
+        # print("looping...")
+        if len(new_chunks) < 1:
+            finished = True
+            break
+        batch = new_chunks.pop(0)
+        
+        ids = ",".join(batch)
+        url = "https://api.spotify.com/v1/audio-features?ids=" + ids
+        headers = {
+        "Authorization": f"Bearer {auth_key}"
+        }
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            # print("all okay")
+            returned_song_infos = response.json()
+            # print(returned_song_infos)
+            for song in returned_song_infos["audio_features"]:
+                song_infos.append(song)
+
+            # add each song info that is returned.
+        else:
+            print(f"Error retrieving audio features: {response.status_code}")
+            print(f"Error message: {response.headers}")
+    return song_infos
+
+
+
+
 def generate_playlist(songs, duration, type):
-    bpm_low = 120
+    bpm_low = 160
     bpm_high = 200
-    # if type == 0:
-    #     bpm_low = 120
-    #     bpm_high = 140
-    # elif type == 1:
-    #     bpm_low = 130
-    #     bpm_high = 150
-    # else:
-    #     bpm_low = 160
-    #     bpm_high = 180
+    if type == 0:
+        bpm_low = 120
+        bpm_high = 140
+    elif type == 1:
+        bpm_low = 130
+        bpm_high = 150
+    else:
+        bpm_low = 160
+        bpm_high = 180
 
     playlist = []
+    song_infos = batch_queries(songs)
+    # print(len(song_infos))
     total_time = duration * 1000
     if len(liked_songs) < 1:
         print("you need to like some songs to use our service!")
@@ -68,13 +119,22 @@ def generate_playlist(songs, duration, type):
     
     # songs = sorted(liked_songs, key= lambda x: x[1])
     random.shuffle(songs)
-    for track in songs:
+    for i in range(len(songs)):
+        # this should never happen
+        if i > len(songs) or i > len(song_infos):
+            continue
+        track = songs[i]
+        info = song_infos[i]
         if track[1] < total_time and track[1] > 0:
-            info = get_song_info(track[0])
-            if info['tempo'] <= bpm_high and info['tempo'] >= bpm_low:
-                if info['danceability'] > 0.6 or info['energy'] > 0.6:
-                    total_time = total_time - track[1]
-                    playlist.append(track[0])
+            if info is not None:
+                if info['tempo'] <= bpm_high and info['tempo'] >= bpm_low:
+                    if info['danceability'] > 0.7 and info['energy'] > 0.7:
+                        total_time = total_time - track[1]
+                        playlist.append(track[0])
+            else:
+                total_time = total_time - track[1]
+                playlist.append(track[0])
+
         if total_time < 60000:
             break
     # return URIs instead of IDs. 
@@ -123,6 +183,8 @@ def create_playlist(song_ids):
         # Handle error
         print(f"Error creating playlist: {response.status_code}")
         print(f"Error message: {response.text}")
+        print(f"{response}")
+
         return
 
     # add all the songs
@@ -195,9 +257,47 @@ def get_song_info(song_id):
     else:
         # Handle error
         print(f"Error retrieving audio features: {response.status_code}")
-        print(f"Error message: {response.text}")
-        return
+        print(f"Error message: {response.headers}")
+        return None
+
+def get_radio_songs(artists,genres,tracks):
+    url = "https://api.spotify.com/v1/recommendations"
+
+    # Request parameters
+    params = {
+        "seed_artists": artists,
+        "seed_genres": genres,
+        "seed_tracks": tracks,
+        "min_danceability": 0.6,
+        "min_energy": 0.6,
+        "min_liveness": 0.6
+    }
+
+    # Authorization header
+    headers = {
+        "Authorization": f"Bearer {auth_key}", 
+        "limit": "50"
+    }
+
+    # Send the GET request
+    response = requests.get(url, params=params, headers=headers)
+
+    # Check for successful response
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        
+        # Access and process the data (tracks, artists, etc.)
+        # ...
+        
+        print("Successfully retrieved recommendations!")
+    else:
+        print(f"Error: {response.status_code} {response.text}")
+        print(f"{response}")
+
+
+
 
 liked_songs = get_liked_songs()
-playlist = generate_playlist(liked_songs, 10000, 2)
+playlist = generate_playlist(liked_songs, 1000, 2)
 create_playlist(playlist)
