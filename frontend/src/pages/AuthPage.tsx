@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function App() {
+function AuthPage() {
 
   const [bearerToken, setBearerToken] = useState<string | null>(null);
 
@@ -15,4 +15,4 @@ function App() {
   );
 }
 
-export default App;
+export default AuthPage;
