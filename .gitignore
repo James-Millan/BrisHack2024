@@ -9,3 +9,9 @@
 
 # Env files
 *.env
+
+# Other
+*.DS_Store
+*.vscode
+*.idea
+*__pycache__
