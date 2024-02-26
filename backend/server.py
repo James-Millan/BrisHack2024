@@ -395,7 +395,7 @@ def route():
 
     # TODO: Compute duration based on run type
     if run_type == "running":
-        speed = 3.58
+        speed = 3.2
     elif run_type == "jogging":
         speed = 2.24
     else:
