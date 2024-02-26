@@ -68,8 +68,8 @@ def merge(distance, points, playlist):
     if (len(distance_q) > 0):
         print("FINISHED SHORT")
 
-        nav_response = map_service.navigate(curr_points[-1], [legs[0]["points"][0]])
-        nav_response = map_service.navigate(points)
+        print([curr_points[-1], legs[0]["points"][0]])
+        nav_response = map_service.navigate([curr_points[-1], legs[0]["points"][0]])
         geometry = nav_response["geometry"]
         extension_points = polyline.decode(geometry)
 
