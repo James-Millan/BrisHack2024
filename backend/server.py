@@ -395,7 +395,7 @@ def route():
 
     # Get songs from Spotify and create a playlist
     songs = music.get_liked_songs(apiKey)
-    playlist = music.generate_playlist(songs, duration)
+    playlist = music.generate_playlist(songs, duration, 2, apiKey)
     playlist_id = music.create_playlist(apiKey, playlist)
 
     # Call the map service
