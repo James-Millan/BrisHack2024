@@ -412,7 +412,7 @@ def route():
     }
 
 
-@app.route('/api/route-dummy', methods=['POST', 'OPTIONS'])
+@app.route('/api/routedummy', methods=['POST', 'OPTIONS'])
 @cross_origin()
 def route():
     if request.method == 'OPTIONS':
