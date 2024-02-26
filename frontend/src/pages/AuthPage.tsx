@@ -54,7 +54,7 @@ const AuthPage = ({bearerToken, setBearerToken}: {
                             animate={{opacity: 1, y: 0}}
                             transition={{duration: 0.3, delay: 0.25}}>
                             <Typography variant="h3" color={"primary"} align="center">
-                                Playlist Maker
+                                Tempo Trainer
                             </Typography>
                             <Typography variant="h6" color={"#ffffff"} align="center">
                                 Custom Playlists to Power Your Run

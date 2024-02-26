@@ -20,7 +20,7 @@ const LoadingScreen = () => {
     useEffect(() => {
         const tid = setTimeout(() => {
             setQuipCounter(i => (i + 1) % MrMillanQuips.length);
-        }, 3000);
+        }, 5000);
         return () => {clearTimeout(tid)}
     }, [quipCounter, setQuipCounter])
 
@@ -30,7 +30,7 @@ const LoadingScreen = () => {
             <Card style={{width: '50%', height: '80%', display: "flex", flexDirection:"column", justifyContent:"space-between", padding:"2%", borderRadius:"12px"}}>
                 <Box display={"flex"} flexDirection={"column"} alignItems={"center"} justifyContent={"center"} width={"100%"} height={"100%"} gap={6}>
                     <Typography variant={"h5"}>
-                        Loading Your Playlist
+                        Creating Your Playlist
                     </Typography>
                     <CircularProgress size="3rem" color={"primary"}/>
                     <Typography variant={"h5"} color={" #6A6B6C"} align={"center"} width={"80%"}>

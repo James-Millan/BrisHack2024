@@ -20,9 +20,22 @@ export default function IntroSlide() {
                         initial={{opacity: 0, x: -50}}
                         animate={{opacity: 1, x: 0}}
                         transition={{duration: 0.3, delay: 1.5}}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            padding: "2%",
+                            borderRadius: "12px"
+                        }}
                     >
                         <Typography variant={"h2"} color={"primary"} textAlign={"center"} >
                             Playlist Generated
+                        </Typography>
+                        <Typography variant={"h5"} color={"#ffffff"} textAlign={"center"} width={"50%"}>
+                            We've picked a selection of your favourite songs and created a playlist for your run
                         </Typography>
                     </motion.div>
                 </Box>

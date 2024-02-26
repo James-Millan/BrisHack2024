@@ -7,7 +7,7 @@ import Dashboard from "./Dashboard";
 import StoryPage from "./Stories";
 import {useNavigate} from "react-router-dom";
 
-const apiURL = "http://ec2-18-171-186-164.eu-west-2.compute.amazonaws.com/api/route-dummy"
+const apiURL = "http://ec2-18-171-186-164.eu-west-2.compute.amazonaws.com/api/route"
 const playlistID = "76HBifC4wKqi4bwYXb0S1P"
 
 
@@ -38,10 +38,8 @@ const MyForm = ({Token}: { Token: string | null }) => {
             }).then((response) => response.json())
                 .then((data) => {
                     console.log('API response:', data);
-                    setTimeout(() => {
-                        setAPIResponse(data)
-                        setCurrentState("stories")
-                    }, 5000);
+                    setAPIResponse(data)
+                    setCurrentState("stories")
                     // Handle the response data as needed
                 })
                 .catch((error) => {
@@ -61,7 +59,7 @@ const MyForm = ({Token}: { Token: string | null }) => {
             case "stories":
                 return <StoryPage Token={Token} APIData={apiResponse} setCurrentState={setCurrentState}/>
             case "done":
-                return <Dashboard APIData={apiResponse}/>
+                return <Dashboard Token={Token} APIData={apiResponse}/>
 
         }
     }

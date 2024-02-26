@@ -21,7 +21,7 @@ function toHHMMSS(num: number) {
     return `${hours}h ${minutes}m ${seconds}s`;
 };
 
-const Dashboard = ({APIData}: { APIData: any }) => {
+const Dashboard = ({APIData, Token}: { APIData: any, Token : string | null }) => {
 
 
     return (
@@ -47,7 +47,7 @@ const Dashboard = ({APIData}: { APIData: any }) => {
                         padding: "2%",
                         borderRadius: "12px"
                     }}>
-                        <Map APIData={APIData}/>
+                        <Map Token={Token} APIData={APIData}/>
                     </Card>
                 </motion.div>
                 <motion.div
@@ -137,19 +137,19 @@ const Dashboard = ({APIData}: { APIData: any }) => {
                                  display={"flex"} alignItems={"center"} justifyContent={"start"} gap={3} pl={4} pr={4}
                             >
                                 <FacebookShareButton
-                                    url={'https://www.example.com'}
+                                    url={`https://open.spotify.com/${APIData["playlistId"]}`}
                                     hashtag="#Health"
                                 >
                                     <FacebookIcon size={50} round />
                                 </FacebookShareButton>
                                 <TwitterShareButton
-                                    url={'https://www.example.com'}
+                                    url={`https://open.spotify.com/${APIData["playlistId"]}`}
                                     title={"My new running playlist"}
                                 >
                                     <TwitterIcon size={50} round />
                                 </TwitterShareButton>
                                 <RedditShareButton
-                                    url={'https://www.example.com'}
+                                    url={`https://open.spotify.com/${APIData["playlistId"]}`}
                                     title={"My new running playlist"}
                                 >
                                     <RedditIcon size={50} round />

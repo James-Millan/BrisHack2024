@@ -5,7 +5,17 @@ import {useContext} from "react";
 import {motion} from 'framer-motion'
 import {useTheme} from "@emotion/react";
 
-const DistanceSlide = ({APIData}: { APIData: any }) => {
+function toHHMMSS(num: number) {
+    let seconds = Math.floor(num);
+    let hours = Math.floor(seconds / 3600);
+    seconds -= hours * 3600;
+    const minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    return `${hours}h ${minutes}m`;
+};
+
+const DurationSlide = ({APIData}: { APIData: any }) => {
     const theme = useTheme();
     return (
         <div>
@@ -34,10 +44,10 @@ const DistanceSlide = ({APIData}: { APIData: any }) => {
                             }}
                         >
                             <Typography variant={"h5"} color={"primary"} textAlign={"center"}>
-                                You're going to run
+                                It's going to take
                             </Typography>
                             <Typography variant={"h2"} color={"#ffffff"} textAlign={"center"} width={"100%"}>
-                                {`${APIData[`distance`] / 1000} km`}
+                                {`${toHHMMSS(APIData[`duration`])}`}
                             </Typography>
                         </motion.div>
                     </Box>
@@ -90,4 +100,4 @@ const DistanceSlide = ({APIData}: { APIData: any }) => {
     );
 }
 
-export default DistanceSlide;
+export default DurationSlide;

@@ -88,7 +88,7 @@ const DistanceSlider = ({setDistance}: { setDistance: Dispatch<SetStateAction<nu
                     valueLabelFormat={valueLabelFormat}
                     marks={marks}
                     min={0}
-                    max={50}
+                    max={30}
                     style={{width: '85%'}}
                     onChange={(e, val) => {
                         setDistance(val)
