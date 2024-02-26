@@ -136,7 +136,7 @@ def generate_playlist(songs, duration, type, auth_key):
         additional_songs = get_radio_songs([],[],playlist[:5])
         # print(len(additional_songs))
         random.shuffle(additional_songs)
-        additional_song_infos = batch_queries(additional_songs)
+        additional_song_infos = batch_queries(additional_songs, auth_key)
         for i in range(len(additional_songs)):
             # this should never happen
             track = additional_songs[i]
