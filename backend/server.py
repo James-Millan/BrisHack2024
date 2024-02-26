@@ -23,10 +23,11 @@ def serve(path):
 
 
 @app.route('/api/route', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def route():
 
-    # if request.method == 'OPTIONS':
-    #     return build_cors_preflight_response()
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
 
     # Get request body parameters
     body = request.json
@@ -50,7 +51,6 @@ def route():
     # Merge the map and Spotify response
     legs = merger.merge(distance, map_response["points"], playlist)
 
-    response = build_cors_preflight_response()
     return {
         "distance": distance,
         "duration": duration,
