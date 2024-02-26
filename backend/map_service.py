@@ -147,6 +147,32 @@ def remove_duplicates(points):
         i += 1
 
     return points
+
+
+def lerp_between_two_points(lat, lng, lat2, lng2, proportion):
+    """Linearly interpolates between two coordinate points on earth."""
+
+    # using haversine
+    lat = math.radians(lat)
+    lng = math.radians(lng)
+    lat2 = math.radians(lat2)
+    lng2 = math.radians(lng2)
+
+    d = haversine.haversine((lat, lng), (lat2, lng2), unit=haversine.Unit.METERS)
+    a = proportion * d
+    f = a / d
+
+    A = math.sin((1 - f) * d) / math.sin(d)
+    B = math.sin(f * d) / math.sin(d)
+    x = A * math.cos(lat) * math.cos(lng) + B * math.cos(lat2) * math.cos(lng2)
+    y = A * math.cos(lat) * math.sin(lng) + B * math.cos(lat2) * math.sin(lng2)
+    z = A * math.sin(lat) + B * math.sin(lat2)
+
+    lat3 = math.atan2(z, math.sqrt(x ** 2 + y ** 2))
+    lng3 = math.atan2(y, x)
+    
+    return math.degrees(lat3), math.degrees(lng3)
+
         
 
 if __name__ == "__main__":
