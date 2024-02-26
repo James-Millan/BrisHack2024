@@ -171,7 +171,16 @@ def lerp_between_two_points(lat, lng, lat2, lng2, proportion):
     lat3 = math.atan2(z, math.sqrt(x ** 2 + y ** 2))
     lng3 = math.atan2(y, x)
     
-    return math.degrees(lat3), math.degrees(lng3)
+    new_lat = math.degrees(lat3)
+    new_lng = math.degrees(lng3)
+
+    if new_lat > 90:
+        new_lat = new_lat - 180
+    
+    if new_lng > 180:
+        new_lng = new_lng - 180
+
+    return new_lat, new_lng
 
         
 

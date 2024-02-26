@@ -5,6 +5,9 @@ import map_service
 def merge(distance, points, playlist):
     """Merges the map response with the playlist response."""
 
+    # print("\nINPUT POINTS: ", points, "\n")
+    # print("HELLO")
+
     distance_q = song_distances(playlist, distance)
     assert len(distance_q) == len(playlist)
 
@@ -29,9 +32,15 @@ def merge(distance, points, playlist):
             to_cover = diff - overshoot
             proportion = to_cover / diff
 
+            # print("INTERPOLATING: ", points[i-1], points[i], proportion)
+
             point = map_service.lerp_between_two_points(points[i-1][0], points[i-1][1], points[i][0], points[i][1], proportion)
+
+            # print("\nNEW POINT: ", point, "\n")
             curr_points.append(point)
             points.insert(i, point)
+
+            # print("\nPOINTS: ", curr_points, "\n")
             
             # Create a new leg and add it
             leg = {
