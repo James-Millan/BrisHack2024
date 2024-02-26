@@ -5,6 +5,7 @@ import FormDataEntry from "./FormDataEntry";
 import LoadingScreen from "./loading";
 import Dashboard from "./Dashboard";
 import StoryPage from "./Stories";
+import {useNavigate} from "react-router-dom";
 
 const apiURL = "http://ec2-18-171-186-164.eu-west-2.compute.amazonaws.com/api/route-dummy"
 const playlistID = "76HBifC4wKqi4bwYXb0S1P"
@@ -15,6 +16,13 @@ const MyForm = ({Token}: { Token: string | null }) => {
     const [formData, setFormData] = useState<object | null>(null)
     const [apiResponse, setAPIResponse] = useState<object | null>(null)
 
+    const navigator = useNavigate();
+
+    useEffect(() => {
+        if (Token == null){
+            navigator("/")
+        }
+    }, []);
 
     useEffect(() => {
         if (formData != null) {
@@ -51,7 +59,7 @@ const MyForm = ({Token}: { Token: string | null }) => {
             case "loading":
                 return <LoadingScreen/>
             case "stories":
-                return <StoryPage APIData={apiResponse} setCurrentState={setCurrentState}/>
+                return <StoryPage Token={Token} APIData={apiResponse} setCurrentState={setCurrentState}/>
             case "done":
                 return <Dashboard APIData={apiResponse}/>
 

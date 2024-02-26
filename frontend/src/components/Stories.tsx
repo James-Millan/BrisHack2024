@@ -4,8 +4,11 @@ import Map from "./Map";
 import Stories from 'react-insta-stories';
 import IntroSlide from "./slides/introSlide";
 import DistanceSlide from "./slides/distanceSlide";
+import SpotifyWebApi from 'spotify-web-api-js';
+import {randomInt} from "crypto";
 
-const StoryPage = ({APIData, setCurrentState} : {APIData : any, setCurrentState : Dispatch<SetStateAction<string>>}) => {
+
+const StoryPage = ({Token, APIData, setCurrentState} : {Token : string | null, APIData : any, setCurrentState : Dispatch<SetStateAction<string>>}) => {
     const slidesList = [
         {
             id: 0,
@@ -17,7 +20,7 @@ const StoryPage = ({APIData, setCurrentState} : {APIData : any, setCurrentState 
                     <IntroSlide/>
                 </Box>
             ),
-            duration: 500000,
+            duration: 10000,
         },
         {
             id: 1,
@@ -29,7 +32,7 @@ const StoryPage = ({APIData, setCurrentState} : {APIData : any, setCurrentState 
                     <DistanceSlide APIData={APIData}/>
                 </Box>
             ),
-            duration: 500000,
+            duration: 10000,
         },
         {
             id: 2,
@@ -40,9 +43,46 @@ const StoryPage = ({APIData, setCurrentState} : {APIData : any, setCurrentState 
                     <h1>Test3</h1>
                 </Grid>
             ),
-            duration: 5000,
+            duration: 10000,
+        },
+        {
+            id: 3,
+            name: "Overview",
+            description: "Overview slide to contain an image of the playlist and descriptions etc",
+            content: () => (
+                <Grid container justifyContent={"center"} alignItems={"center"}>
+                    <h1>Test3</h1>
+                </Grid>
+            ),
+            duration: 10000,
+        },
+        {
+            id: 4,
+            name: "Overview",
+            description: "Overview slide to contain an image of the playlist and descriptions etc",
+            content: () => (
+                <Grid container justifyContent={"center"} alignItems={"center"}>
+                    <h1>Test3</h1>
+                </Grid>
+            ),
+            duration: 10000,
         }
     ]
+
+    const spotifyApi = new SpotifyWebApi();
+    spotifyApi.setAccessToken(Token);
+
+    function storyStart() {
+        spotifyApi.play({
+            uris: [`spotify:track:${APIData["legs"][Math.floor(Math.random() * (APIData["legs"].length - 1))]["track"]["id"]}`],
+            position_ms: 30000
+        })
+    }
+
+    function storyEnd(){
+        // spotifyApi.pause()
+        setCurrentState("done")
+    }
 
     return (
         <Box display={"flex"} justifyContent={"center"} alignItems={"center"} width={"100vw"} height={"100vh"}>
@@ -57,7 +97,8 @@ const StoryPage = ({APIData, setCurrentState} : {APIData : any, setCurrentState 
                             width:"100%",
                             height:"100%"
                         }}
-                        onStoryEnd={() => setCurrentState("done")}
+                        onStoryStart={storyStart}
+                        onAllStoriesEnd={storyEnd}
                     />
             </Box>
         </Box>
