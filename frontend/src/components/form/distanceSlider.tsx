@@ -1,7 +1,7 @@
-import { useState } from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {Box, Button, Slider, Typography} from "@mui/material";
 
-function DistanceSlider() {
+const DistanceSlider = ({setDistance}: {setDistance : Dispatch<SetStateAction<number| number[]>>}) => {
 
     const marks = [
         {
@@ -50,6 +50,9 @@ function DistanceSlider() {
         },
     ];
 
+    function valueLabelFormat(value: number){
+        return `${value} km`;
+    }
 
     return (
         <Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
@@ -62,10 +65,13 @@ function DistanceSlider() {
                 valueLabelDisplay="auto"
                 shiftStep={0.5}
                 step={0.5}
+                getAriaValueText={valueLabelFormat}
+                valueLabelFormat={valueLabelFormat}
                 marks={marks}
                 min={0}
                 max={50}
                 style={{width: '80%'}}
+                onChange={ (e, val) => {setDistance(val)} }
             />
         </Box>
     );

@@ -13,7 +13,7 @@ const BGTile = () => {
 
     return(
         <Box width={"100%"} height={"100vh"}>
-            <img src={BG} style={{backgroundSize: 'cover', width: '100%', height: '100%'}}></img>;
+            <img src={BG} style={{backgroundSize: 'cover', width: '10%', height: '10%', backgroundRepeat: "repeat"}}></img>;
         </Box>
     )
 };
