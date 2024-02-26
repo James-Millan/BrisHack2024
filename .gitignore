@@ -7,7 +7,7 @@
 *cdk.out
 
 # Env files
-*.env
+*.env*
 
 # Other
 *.DS_Store
