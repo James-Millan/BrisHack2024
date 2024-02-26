@@ -71,7 +71,7 @@ def merge(distance, points, playlist):
                 "id": playlist[0][0],
                 "duration": playlist[0][1]
             },
-            "points": curr_points + [points[0]]
+            "points": curr_points + [legs[0]["points"][0]]
         }
         legs.append(leg)
 
