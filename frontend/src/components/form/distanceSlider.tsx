@@ -1,7 +1,8 @@
 import {Dispatch, SetStateAction, useState} from "react";
 import {Box, Button, Slider, Typography} from "@mui/material";
+import {motion} from "framer-motion";
 
-const DistanceSlider = ({setDistance}: {setDistance : Dispatch<SetStateAction<number| number[]>>}) => {
+const DistanceSlider = ({setDistance}: { setDistance: Dispatch<SetStateAction<number | number[]>> }) => {
 
     const marks = [
         {
@@ -50,29 +51,50 @@ const DistanceSlider = ({setDistance}: {setDistance : Dispatch<SetStateAction<nu
         },
     ];
 
-    function valueLabelFormat(value: number){
+    function valueLabelFormat(value: number) {
         return `${value} km`;
     }
 
     return (
-        <Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"} flexDirection={"column"}>
+        <Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}
+             flexDirection={"column"}>
+            <motion.div
+                initial={{opacity: 0, y: -50}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.3, delay: 0.1}}
+            >
+                <Typography variant={"h5"} gutterBottom>
+                    Distance
+                </Typography>
+            </motion.div>
 
-            <Typography variant={"h5"} gutterBottom>
-                Distance
-            </Typography>
-            <Slider
-                defaultValue={5}
-                valueLabelDisplay="auto"
-                shiftStep={0.5}
-                step={0.5}
-                getAriaValueText={valueLabelFormat}
-                valueLabelFormat={valueLabelFormat}
-                marks={marks}
-                min={0}
-                max={50}
-                style={{width: '80%'}}
-                onChange={ (e, val) => {setDistance(val)} }
-            />
+            <motion.div
+                initial={{opacity: 0, y: -50}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.3, delay: 0.25}}
+                style={{
+                    width: "100%",
+                    display:"flex",
+                    justifyContent:"center",
+                    alignItems:"center"
+                }}
+            >
+                <Slider
+                    defaultValue={5}
+                    valueLabelDisplay="auto"
+                    shiftStep={0.5}
+                    step={0.5}
+                    getAriaValueText={valueLabelFormat}
+                    valueLabelFormat={valueLabelFormat}
+                    marks={marks}
+                    min={0}
+                    max={50}
+                    style={{width: '85%'}}
+                    onChange={(e, val) => {
+                        setDistance(val)
+                    }}
+                />
+            </motion.div>
         </Box>
     );
 }

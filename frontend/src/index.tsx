@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom/client';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import './index.css';
 import AuthPage from './pages/AuthPage';
 import {Routes, Route, BrowserRouter} from "react-router-dom";

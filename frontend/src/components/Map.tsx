@@ -5,19 +5,30 @@ import {Box} from "@mui/material";
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm0yMDU0NCIsImEiOiJjbHQxczFlemgxZXI2MnFwMm1oaXBhNThyIn0.aMyOcZ5C5K65Xe-GGm8mGg';
 
-const Map = () => {
+
+function convertLegsToFormat(legs: any) {
+    let fin = [];
+    for (let i = 0; i < legs.length; i++){
+        let temp = {
+            "color": "#1DB954",
+        // @ts-ignore
+            "points": legs[i]["points"],
+            "imageURI": legs[i]["track"]["id"]
+        }
+        fin.push(temp);
+    }
+    return fin;
+
+}
+
+const Map = ({APIData} : {APIData : any}) => {
     const mapContainer = useRef<any>(null);
     const map = useRef<mapboxgl.Map | null>(null);
-    const [lng, setLng] = useState(-2.601502684146389);
-    const [lat, setLat] = useState(51.460423425462594);
-    const [zoom, setZoom] = useState(9);
+    const [lng, setLng] = useState(-2.600604308601162);
+    const [lat, setLat] = useState(51.45935278317907);
+    const [zoom, setZoom] = useState(15);
 
-    const colouredRoute = [
-        {"color": "#f00", "points": [[51.45935278317907, -2.600604308601162], [51.460423425462594, -2.601502684146389], [51.460901441105875, -2.602816021332455], [51.46065874620333, -2.604192412520965]]},
-        {"color": "#f0f", "points": [[51.46065874620333, -2.604192412520965], [51.4597603706581, -2.6052630548044875], [51.45844703347204, -2.6057410704477704], [51.457070642283526, -2.605498375545227]]},
-        {"color": "#0ff", "points": [[51.457070642283526, -2.605498375545227], [51.456, -2.6046], [51.45552198435672, -2.6032866628139337], [51.45576467925927, -2.601910271625424]]},
-        {"color": "#ff0", "points": [[51.45576467925927, -2.601910271625424], [51.456663054804494, -2.6008396293419014], [51.457976391990556, -2.6003616136986185], [51.45935278317907, -2.600604308601162]]}
-    ];
+    const colouredRoute : object[] = convertLegsToFormat(APIData["legs"])
 
     useEffect(() => {
         if (map.current) return;
@@ -35,13 +46,14 @@ const Map = () => {
                 'type': 'geojson',
                 'data': {
                     'type': 'FeatureCollection',
+                    // @ts-ignore
                     'features': colouredRoute.map(({color, points}) => {
                         return {
                             'type': 'Feature',
                             'properties': {'color': color},
                             'geometry': {
                                 'type': 'LineString',
-                                'coordinates': points.map(n => [n[1], n[0]])
+                                'coordinates': points.map((n: any[]) => [n[1], n[0]])
                             }
                         }
                     })
@@ -60,12 +72,33 @@ const Map = () => {
                     'line-width': 5,
                 }
             });
+
+
+            // for (let i = 0; i < colouredRoute.length; i++){
+            //     // add point using code below, should probs be a map funtion
+            //     let url = colouredRoute[i]["imageURL"];
+            //     let point = colouredRoute[i]["points"][0];
+            //      add the code from below in here when we have routes
+
+            // }
+
+            const el = document.createElement('div');
+            el.className = 'mapbox-marker';
+            el.style.backgroundImage = "url('https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228')";
+            el.addEventListener("mouseenter", () => el.style.transform += "scale(1.3)");
+            el.addEventListener("mouseleave", () => {
+                el.style.transform = el.style.transform.replaceAll("scale(1.3)", "");
+            });
+            const marker = new mapboxgl.Marker(el)
+                .setLngLat([-2.601502684146389, 51.460423425462594])
+                .addTo(map.current);
+
         });
     });
 
     return (
         <Box width={"100%"} height={"100%"}>
-            <div ref={mapContainer} className="map-container h-[101%]" />
+            <div ref={mapContainer} className="map-container h-[100%]" />
         </Box>
     );
 }

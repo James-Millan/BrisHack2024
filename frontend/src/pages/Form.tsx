@@ -1,6 +1,6 @@
 import {Dispatch, SetStateAction, useState} from "react";
-import InputForm from "../components/form/inputForm";
-import MyForm from "../components/form/inputForm";
+import InputForm from "../components/inputForm";
+import MyForm from "../components/inputForm";
 import {Box} from "@mui/material";
 
 

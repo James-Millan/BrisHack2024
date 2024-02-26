@@ -1,18 +1,90 @@
 import {Box, Card, CircularProgress, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import Map from "./Map";
+import {motion} from "framer-motion";
 
-const LoadingScreen = ({PlaylistId} : {PlaylistId : string}) => {
+function toHHMMSS(num: number) {
+    let seconds = Math.floor(num);
+    let hours = Math.floor(seconds / 3600);
+    seconds -= hours * 3600;
+    const minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    return `${hours}h ${minutes}m ${seconds}s`;
+};
+
+const Dashboard = ({APIData} : {APIData : any}) => {
 
 
     return (
             <Box display={"flex"} alignItems={"center"} justifyContent={"space-evenly"} width={"100vw"} height={"100vh"}>
-                <Card style={{backgroundColor:"#131313", width: '60%', height: '90%', display: "flex", flexDirection:"column", justifyContent:"space-between", padding:"2%", borderRadius:"12px"}}>
-                    <Map/>
+                <Card style={{backgroundColor:"#131313", width: '50%', height: '90%', display: "flex", flexDirection:"column", justifyContent:"space-between", padding:"2%", borderRadius:"12px"}}>
+                    <Map APIData={APIData}/>
                 </Card>
+                <Box width={"20%"} gap={5} height={"90%"} display={"flex"} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+                    <Box width={"100%"} gap={4} height={"100%"} style={{backgroundColor:"#232323", borderRadius:"12px"}} p={5} display={"flex"} justifyContent={"top"} alignItems={"center"} flexDirection={"column"}>
+                        <motion.div
+                            initial={{opacity: 0, x: -50}}
+                            animate={{opacity: 1, x: 0}}
+                            transition={{duration: 0.3, delay: 0}}
+                        >
+                            <Typography variant={"h5"} color={"#ffffff"} textAlign={"center"} >
+                                Distance
+                            </Typography>
+                        </motion.div>
+                        <motion.div
+                            initial={{opacity: 0, scale: 0}}
+                            animate={{opacity: 1, scale: 1}}
+                            transition={{duration: 0.3, delay: 0.2}}
+                        >
+                            <Typography variant={"h3"} color={"primary"} textAlign={"center"} >
+                                {`${APIData[`distance`] / 1000 } km`}
+                            </Typography>
+                        </motion.div>
+                    </Box>
+                    <Box width={"100%"} gap={4} height={"100%"} style={{backgroundColor:"#232323", borderRadius:"12px"}} p={5} display={"flex"} justifyContent={"top"} alignItems={"center"} flexDirection={"column"}>
+                        <motion.div
+                            initial={{opacity: 0, x: -50}}
+                            animate={{opacity: 1, x: 0}}
+                            transition={{duration: 0.3, delay: 0.3}}
+                        >
+                            <Typography variant={"h5"} color={"#ffffff"} textAlign={"center"} >
+                                Duration
+                            </Typography>
+                        </motion.div>
+                        <motion.div
+                            initial={{opacity: 0, scale: 0}}
+                            animate={{opacity: 1, scale: 1}}
+                            transition={{duration: 0.3, delay: 0.5}}
+                        >
+                            <Typography variant={"h3"} color={"primary"} textAlign={"center"} >
+                                {` ${toHHMMSS(APIData[`duration`])} `}
+                            </Typography>
+                        </motion.div>
+                    </Box><Box width={"100%"} gap={4} height={"100%"} style={{backgroundColor:"#232323", borderRadius:"12px"}} p={5} display={"flex"} justifyContent={"top"} alignItems={"center"} flexDirection={"column"}>
+                    <motion.div
+                        initial={{opacity: 0, x: -50}}
+                        animate={{opacity: 1, x: 0}}
+                        transition={{duration: 0.3, delay: 0.7}}
+                    >
+                        <Typography variant={"h5"} color={"#ffffff"} textAlign={"center"} >
+                            Vibes
+                        </Typography>
+                    </motion.div>
+                    <motion.div
+                        initial={{opacity: 0, scale: 0}}
+                        animate={{opacity: 1, scale: 1}}
+                        transition={{duration: 0.3, delay: 0.9}}
+                    >
+                        <Typography variant={"h3"} color={"primary"} textAlign={"center"} >
+                            ?
+                        </Typography>
+                    </motion.div>
+                </Box>
+                </Box>
                 <iframe
                     style={{borderRadius:"12px"}}
-                    src={`https://open.spotify.com/embed/playlist/${PlaylistId}?utm_source=generator&theme=0`}
+                    src={`https://open.spotify.com/embed/playlist/${APIData["playlistId"]}?utm_source=generator&theme=0`}
                     width="25%"
                     height="90%"
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
@@ -22,4 +94,4 @@ const LoadingScreen = ({PlaylistId} : {PlaylistId : string}) => {
     )
 }
 
-export default LoadingScreen;
+export default Dashboard;
