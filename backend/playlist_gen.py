@@ -99,10 +99,10 @@ def generate_playlist(songs, duration, type, auth_key):
         bpm_low = 100
         bpm_high = 140
     elif type == 1:
-        bpm_low = 100
+        bpm_low = 120
         bpm_high = 150
     else:
-        bpm_low = 100
+        bpm_low = 130
         bpm_high = 180
 
     playlist = []
