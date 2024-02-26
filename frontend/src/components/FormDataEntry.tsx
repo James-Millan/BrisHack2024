@@ -15,7 +15,11 @@ const FormDataEntry = ({Token, setCurrentState, setFormData} : {Token : string |
         // collect form data
         let formData = {
             "runType": runType,
-            "distance": distance
+            "distance": distance,
+            "apiKey": Token,
+            MVB_LAT: 51.4560,
+            MVB_LNG: -2.6046
+
         }
 
         setCurrentState("loading")
@@ -24,9 +28,10 @@ const FormDataEntry = ({Token, setCurrentState, setFormData} : {Token : string |
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
-            <Card style={{width: '50%', height: '80%', display: "flex", flexDirection:"column", justifyContent:"space-between", padding:"2%"}}>
+            <Card style={{width: '50%', height: '80%', display: "flex", flexDirection:"column", justifyContent:"space-between", padding:"2%", borderRadius:"12px"}}>
                 <Typography variant="h3" align="center">
                     Select Your Options
+                    {Token}
                 </Typography>
                 <Box display={"flex"} flexDirection={"column"} alignItems={"center"} justifyContent={"space-evenly"} height={"100%"}>
                     <ModeSelector runType={runType} setRunType={setRunType}/>

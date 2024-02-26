@@ -24,7 +24,7 @@ const AuthPage = ({bearerToken, setBearerToken}: {bearerToken : string | null, s
   return (
     <div className="App bg-gradient-to-t to-green-500 from-green-900 h-screen w-screen" >
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw' }}>
-        <Card style={{width: '30%', height: '30%', display: "flex", flexDirection:"column", justifyContent:"space-between", padding:"2%"}}>
+        <Card style={{width: '30%', height: '30%', display: "flex", flexDirection:"column", justifyContent:"space-between", padding:"2%",  borderRadius:"12px"}}>
           <Typography variant="h3" align="center">
             Playlist Runner
           </Typography>
