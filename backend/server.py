@@ -412,9 +412,9 @@ def route():
     }
 
 
-@app.route('/api/routedummy', methods=['POST', 'OPTIONS'])
+@app.route('/api/route-dummy', methods=['POST', 'OPTIONS'])
 @cross_origin()
-def route():
+def dummy():
     if request.method == 'OPTIONS':
         return build_cors_preflight_response()
     return DUMMY_RESPONSE
