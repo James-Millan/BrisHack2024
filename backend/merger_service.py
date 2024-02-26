@@ -60,7 +60,10 @@ def merge(distance, points, playlist):
     if (len(distance_q) > 0):
         # Add the final leg
         leg = {
-            "track": playlist[0],
+            "track": {
+                "id": playlist[0][0],
+                "duration": playlist[0][1]
+            },
             "points": curr_points
         }
         legs.append(leg)
