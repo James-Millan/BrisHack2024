@@ -149,6 +149,15 @@ def remove_duplicates(points):
     return points
 
 
+def lerp_avg_between_two_points(lat, lng, lat2, lng2, proportion):
+    """Lerps between two points."""
+
+    new_lat = lat + (lat2 - lat) * proportion
+    new_lng = lng + (lng2 - lng) * proportion
+
+    return new_lat, new_lng
+
+
 def lerp_between_two_points(lat, lng, lat2, lng2, proportion):
     """Linearly interpolates between two coordinate points on earth."""
 
@@ -177,7 +186,7 @@ def lerp_between_two_points(lat, lng, lat2, lng2, proportion):
     if new_lat > 90:
         new_lat = new_lat - 180
     
-    if new_lng > 180:
+    if new_lng > 90:
         new_lng = new_lng - 180
 
     return new_lat, new_lng
