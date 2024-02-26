@@ -1,6 +1,7 @@
 import os
 import urllib
 from flask import Flask, request, send_from_directory, make_response
+from flask_cors import CORS, cross_origin
 
 import map_service as map
 import playlist_gen as music
@@ -8,6 +9,7 @@ import merger_service as merger
 
 
 app = Flask(__name__, static_folder='../frontend/build')
+cors = CORS(app)
 
 
 # Route non-api requests to the frontend
@@ -23,8 +25,8 @@ def serve(path):
 @app.route('/api/route', methods=['POST', 'OPTIONS'])
 def route():
 
-    if request.method == 'OPTIONS':
-        return build_cors_preflight_response()
+    # if request.method == 'OPTIONS':
+    #     return build_cors_preflight_response()
 
     # Get request body parameters
     body = request.json
@@ -48,6 +50,7 @@ def route():
     # Merge the map and Spotify response
     legs = merger.merge(distance, map_response["points"], playlist)
 
+    response = build_cors_preflight_response()
     return {
         "distance": distance,
         "duration": duration,
