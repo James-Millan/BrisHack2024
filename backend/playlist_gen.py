@@ -46,7 +46,7 @@ def get_liked_songs(auth_key):
 
 
 # batch my queries
-def batch_queries(songs):
+def batch_queries(songs, auth_key):
     # split into chunks of 100
     chunks = []
     for i in range(0, len(songs), 100):
@@ -92,7 +92,7 @@ def batch_queries(songs):
             print(f"Error message: {response.headers}")
     return song_infos
 
-def generate_playlist(songs, duration, type):
+def generate_playlist(songs, duration, type, auth_key):
     bpm_low = 100
     bpm_high = 200
     if type == 0:
@@ -106,7 +106,7 @@ def generate_playlist(songs, duration, type):
         bpm_high = 180
 
     playlist = []
-    song_infos = batch_queries(songs)
+    song_infos = batch_queries(songs, auth_key)
     # print(len(song_infos))
     total_time = duration * 1000
     if len(songs) < 1:
@@ -125,7 +125,7 @@ def generate_playlist(songs, duration, type):
                     if ((info['danceability'] > 0.8 and info['energy'] > 0.7 ) or (info['energy'] > 0.9 and info['danceability'] > 0.6) or (info['danceability'] > 0.9 and info['energy'] > 0.6)):
                         total_time = total_time - track[1]
                         print(f"bpm: {info['tempo']} dance: {info['danceability']}, energy: {info['energy']}, loudness: {info['loudness']}, valence: {info['valence']}")
-                        playlist.append((track[0], info['valence'], info['duration_ms']))
+                        playlist.append((track[0],info['duration_ms'], info['valence']))
             else:
                 total_time = total_time - track[1]
                 playlist.append((track[0], 0.0, 0.0))
@@ -147,7 +147,7 @@ def generate_playlist(songs, duration, type):
                         if ((info['danceability'] > 0.7 and info['energy'] > 0.6) or info['energy'] > 0.8 or info['danceability'] > 0.8):
                             total_time = total_time - track[1]
                             print(f"bpm: {info['tempo']} dance: {info['danceability']}, energy: {info['energy']}, loudness: {info['loudness']}, valence: {info['valence']}")
-                            playlist.append((track[0], info['valence'], info['duration_ms']))
+                            playlist.append((track[0], info['duration_ms'], info['valence'] ))
                 else:
                     total_time = total_time - track[1]
                     playlist.append((track[0], 0.0, 0))
@@ -158,20 +158,16 @@ def generate_playlist(songs, duration, type):
     playlist_half2 = playlist[:len(playlist)//2]
     playlist_half1 = playlist[len(playlist)//2:]
 
-    sorted(playlist_half2, key= lambda x: float(x[1]))
-    sorted(playlist_half1, key= lambda x: float(x[1]), reverse=True)
+    sorted(playlist_half2, key= lambda x: float(x[2]))
+    sorted(playlist_half1, key= lambda x: float(x[2]), reverse=True)
 
-    playlist_half1.append(playlist_half2)
+    playlist_half1.extend(playlist_half2)
     playlist = playlist_half1
-    ret_playlist = []
-    for i in range(len(playlist)):
-        ret_playlist.append(playlist[i][0], playlist[i][2])
-
-    ret_playlist[-1] = (ret_playlist[-1][0], ret_playlist[-1][2])
+   
 
 
     # return URIs instead of IDs. 
-    return ret_playlist
+    return playlist
 
 
 
@@ -206,8 +202,7 @@ def create_playlist(auth_key, tracks):
     "Content-Type": "application/json"
     }
 
-    print(tracks)
-
+    
     # create playlist
     response = requests.post(url, headers=headers, json=playlist_data)
     playlist_id = 0
@@ -226,6 +221,8 @@ def create_playlist(auth_key, tracks):
         return
 
     # add all the songs
+    print(tracks)
+
     data = {
     "uris": list(map(lambda x: "spotify:track:" + x[0], tracks)),
     "position": 0
@@ -278,7 +275,7 @@ def create_playlist(auth_key, tracks):
     return
 
 
-def get_song_info(song_id):
+def get_song_info(song_id, auth_key):
         # Set the URL and headers
     url = f"https://api.spotify.com/v1/audio-features/{song_id}"
     headers = {
@@ -299,7 +296,7 @@ def get_song_info(song_id):
         print(f"Error message: {response.headers}")
         return None
 
-def get_radio_songs(artists,genres,tracks):
+def get_radio_songs(artists,genres,tracks, auth_key):
     url = "https://api.spotify.com/v1/recommendations"
 
     # Request parameters
@@ -345,4 +342,3 @@ def get_radio_songs(artists,genres,tracks):
 # playlist = generate_playlist(liked_songs, 1000)
 # playlist_id = create_playlist(api_key, playlist)
 # print(playlist_id)
-
