@@ -1,14 +1,13 @@
 import requests
 import random
 
-
 """
 NUMBERS THAT CORRESPOND TO EXERCISE TYPE:
 0 - POWER WALKING 120-140 BPM
 1 - JOGGING 130-150 BPM
 2 - RUNNING 140 - 170 BPM
 """
-auth_key = "BQC_-YV1YakzkisRsTwZz2jn236scQpDzgcDsYJ-DNZuQZa5vgw7gaTZFHwmBLyaIQD1xqbWuubEyReVpWSKjpqjtkx_4ejsVNzyjk6_3JabtQtgF1G3kQ4UnYo8B-R-YpxpuR7EskFE4EDYKXFxx5Oq975SFEX3uAYeH9FfOPoMn2UldHCr_hHwSUDKg5qvSV5Hw76vM8lj4R_qXNOj-q9erxUBAVNdqOY31K5WeKO7UU1BdeC2GlbJ80k7rllq4susGQ"
+auth_key = "BQCFEvATmnN38qYNImOaFqD9jSB2GZtDGmslj7Ht3gMW81X9zQBIuZ1KwkfVlki_jcvnfjGSamaQBGvwD_Y_HLSpkAol95q1PMWcw1vaKacmzILdEG9U8tSzZJxdvSXpi-ZSYRGL0uFemqnkjTa1HT7qTlHEO1nu0MSYG7ikxLJ82w65ilEZBtVsdRklxj_N-Mv4lx4TyyrZxHXb24sSgQBqQl1WIKFzN9LGVUUjdMhlk2XceeW98q1hBLeCObk1sx76QjY"
 
 def get_liked_songs():
 
@@ -92,9 +91,6 @@ def batch_queries(songs):
             print(f"Error message: {response.headers}")
     return song_infos
 
-
-
-
 def generate_playlist(songs, duration, type):
     bpm_low = 100
     bpm_high = 200
@@ -125,13 +121,13 @@ def generate_playlist(songs, duration, type):
         if track[1] < total_time and track[1] > 0:
             if info is not None:
                 if info['tempo'] >= bpm_low:
-                    if (info['danceability'] > 0.8 and info['energy'] > 0.7 or info['energy'] > 0.9 or info['danceability'] > 0.9):
+                    if ((info['danceability'] > 0.8 and info['energy'] > 0.7 ) or (info['energy'] > 0.9 and info['danceability'] > 0.6) or (info['danceability'] > 0.9 and info['energy'] > 0.6)):
                         total_time = total_time - track[1]
                         print(f"bpm: {info['tempo']} dance: {info['danceability']}, energy: {info['energy']}, loudness: {info['loudness']}, valence: {info['valence']}")
-                        playlist.append(track[0])
+                        playlist.append((track[0], info['valence']))
             else:
                 total_time = total_time - track[1]
-                playlist.append(track[0])
+                playlist.append((track[0], 0.0))
 
         if total_time < 60000:
             break
@@ -140,7 +136,7 @@ def generate_playlist(songs, duration, type):
         # print(len(additional_songs))
         random.shuffle(additional_songs)
         additional_song_infos = batch_queries(additional_songs)
-        for i in range(len(songs)):
+        for i in range(len(additional_songs)):
             # this should never happen
             track = additional_songs[i]
             info = additional_song_infos[track[0]]
@@ -150,17 +146,31 @@ def generate_playlist(songs, duration, type):
                         if ((info['danceability'] > 0.7 and info['energy'] > 0.6) or info['energy'] > 0.8 or info['danceability'] > 0.8):
                             total_time = total_time - track[1]
                             print(f"bpm: {info['tempo']} dance: {info['danceability']}, energy: {info['energy']}, loudness: {info['loudness']}, valence: {info['valence']}")
-                            playlist.append(track[0])
+                            playlist.append((track[0], info['valence']))
                 else:
                     total_time = total_time - track[1]
-                    playlist.append(track[0])
+                    playlist.append((track[0], 0.0))
 
             # if total_time < 60000:
             #     break
+    
+    playlist_half2 = playlist[:len(playlist)//2]
+    playlist_half1 = playlist[len(playlist)//2:]
+
+    sorted(playlist_half2, key= lambda x: float(x[1]))
+    sorted(playlist_half1, key= lambda x: float(x[1]), reverse=True)
+
+    playlist_half1.append(playlist_half2)
+    playlist = playlist_half1
+    ret_playlist = []
+    for i in range(len(playlist)):
+        ret_playlist.append(playlist[i][0])
+
+    ret_playlist[-1] = ret_playlist[-1][0]
 
 
     # return URIs instead of IDs. 
-    return ["spotify:track:" + item for item in playlist]
+    return ["spotify:track:" + item for item in ret_playlist]
 
 def get_user_id():
     url = "https://api.spotify.com/v1/me"
@@ -323,9 +333,6 @@ def get_radio_songs(artists,genres,tracks):
         print(f"Error: {response.status_code} {response.text}")
         print(f"{response}")
     return rec_songs
-
-
-
 
 liked_songs = get_liked_songs()
 playlist = generate_playlist(liked_songs, 5000, 2)
