@@ -1,5 +1,6 @@
 import haversine
 import map_service
+import polyline
 
 
 def merge(distance, points, playlist):
@@ -66,13 +67,19 @@ def merge(distance, points, playlist):
     # Distance finished short
     if (len(distance_q) > 0):
         print("FINISHED SHORT")
+
+        nav_response = map_service.navigate(curr_points[-1], [legs[0]["points"][0]])
+        nav_response = map_service.navigate(points)
+        geometry = nav_response["geometry"]
+        extension_points = polyline.decode(geometry)
+
         # Add the final leg
         leg = {
             "track": {
                 "id": playlist[0][0],
                 "duration": playlist[0][1]
             },
-            "points": curr_points + [legs[0]["points"][0]]
+            "points": curr_points + extension_points
         }
         legs.append(leg)
 
