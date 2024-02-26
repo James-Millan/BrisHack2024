@@ -1,6 +1,6 @@
 import os
 import urllib
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, send_from_directory, make_response
 
 import map_service as map
 import playlist_gen as music
@@ -20,8 +20,11 @@ def serve(path):
         return send_from_directory(app.static_folder, 'index.html')
 
 
-@app.route('/api/route', methods=['POST'])
+@app.route('/api/route', methods=['POST', 'OPTIONS'])
 def route():
+
+    if request.method == 'OPTIONS':
+        return build_cors_preflight_response()
 
     # Get request body parameters
     body = request.json
@@ -69,6 +72,14 @@ def hello():
     return {
         "message": "Hello, World!"
     }
+
+
+def build_cors_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "*")
+    response.headers.add("Access-Control-Allow-Methods", "*")
+    return response
 
 
 if __name__ == '__main__':
