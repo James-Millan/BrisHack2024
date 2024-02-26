@@ -35,7 +35,10 @@ def merge(distance, points, playlist):
             
             # Create a new leg and add it
             leg = {
-                "track": playlist[0],
+                "track": {
+                    "id": playlist[0][0],
+                    "duration": playlist[0][1]
+                },
                 "points": curr_points
             }
             legs.append(leg)

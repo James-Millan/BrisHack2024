@@ -47,6 +47,7 @@ def route():
 
     return {
         "distance": distance,
+        "duration": duration,
         "legs": legs,
         "playlistId": playlist_id
     }
