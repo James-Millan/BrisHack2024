@@ -59,6 +59,7 @@ def create_route(lat, lng, distance_in_m):
     geometry = nav_response["geometry"]
     raw_points = polyline.decode(geometry)
     filtered_points = remove_duplicates(raw_points)
+    # filtered_points.append(filtered_points[0])
 
     return {
         "distance": nav_response["distance"],
