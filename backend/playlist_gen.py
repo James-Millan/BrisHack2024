@@ -133,7 +133,7 @@ def generate_playlist(songs, duration, type, auth_key):
         if total_time < 60000:
             break
     if total_time > 60000:
-        additional_songs = get_radio_songs([],[],playlist[:5])
+        additional_songs = get_radio_songs([],[],playlist[:5], auth_key)
         # print(len(additional_songs))
         random.shuffle(additional_songs)
         additional_song_infos = batch_queries(additional_songs)
