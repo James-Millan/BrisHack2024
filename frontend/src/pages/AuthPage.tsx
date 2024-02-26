@@ -1,8 +1,6 @@
 import { useState } from "react";
 
-const authRedirect = "https://accounts.spotify.com/authorize/?client_id=288d966268824117b239c0f7ed003d0d&response_type=token&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fcallback&scope=user-read-private+user-read-email%2C+user-library-read&state=OW5M366OWA2YW7XQ";
-
-function App() {
+function AuthPage() {
 
   const [bearerToken, setBearerToken] = useState<string | null>(null);
 
@@ -16,4 +14,4 @@ function App() {
   );
 }
 
-export default App;
+export default AuthPage;
