@@ -9,6 +9,7 @@ def merge(distance, points, playlist):
     # print("HELLO")
 
     distance_q = song_distances(playlist, distance)
+    print("Q: ", distance_q)
     assert len(distance_q) == len(playlist)
 
     running_distance = 0

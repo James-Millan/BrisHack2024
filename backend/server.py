@@ -390,16 +390,23 @@ def route():
     distance = body.get('distance')
     apiKey = body.get('apiKey')
 
+    # Call the map service
+    map_response = map.create_route(float(lat), float(lng), int(distance))
+
     # TODO: Compute duration based on run type
-    duration = distance / 3.78
+    if run_type == "running":
+        speed = 3.58
+    elif run_type == "jogging":
+        speed = 2.24
+    else:
+        speed = 1.344
+
+    duration = map_response["distance"] / speed
 
     # Get songs from Spotify and create a playlist
     songs = music.get_liked_songs(apiKey)
     playlist = music.generate_playlist(songs, duration, 2, apiKey)
     playlist_id = music.create_playlist(apiKey, playlist)
-
-    # Call the map service
-    map_response = map.create_route(float(lat), float(lng), int(distance))
 
     # Merge the map and Spotify response
     legs = merger.merge(distance, map_response["points"], playlist)
