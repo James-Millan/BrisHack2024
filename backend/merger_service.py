@@ -20,6 +20,7 @@ def merge(distance, points, playlist):
 
         # If there are no more songs to play, return the legs
         if len(distance_q) == 0:
+            print(legs)
             return legs
     
         # Compute haversine distance between the two points
@@ -34,7 +35,7 @@ def merge(distance, points, playlist):
 
             # print("INTERPOLATING: ", points[i-1], points[i], proportion)
 
-            point = map_service.lerp_between_two_points(points[i-1][0], points[i-1][1], points[i][0], points[i][1], proportion)
+            point = map_service.lerp_avg_between_two_points(points[i-1][0], points[i-1][1], points[i][0], points[i][1], proportion)
 
             # print("\nNEW POINT: ", point, "\n")
             curr_points.append(point)
@@ -77,6 +78,7 @@ def merge(distance, points, playlist):
         }
         legs.append(leg)
 
+    print(legs)
     return legs
 
 
